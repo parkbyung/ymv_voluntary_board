@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="board"> 
+ 	<!-- <insert id="write" parameterType="bvo">
+ 	 <selectKey keyProperty="no" resultType="int" order="BEFORE">
+		select spring_board_reply_seq.nextval from dual
+	</selectKey>  
+  insert into spring_board_reply(
+	  no,title,writer,password,
+	  content,write_date,view_count,	  
+	  ref,restep,relevel
+  )  values(#{no},#{title},#{writer},#{password},#{content},sysdate,0,#{no},0,0)
+  </insert> -->
+<!--      <resultMap type="bvo" id="boardListRM">		
+		<result property="viewCount" column="view_count" />			
+		<result property="writeDate" column="write_date" /> 		
+	</resultMap>	 -->
+	<select id="getBoardList" resultType="bvo">	
+	select recruitNo, title, field, location, age, startDate, endDate from(select recruit_no as recruitNo, title, field, location, age, CEIL(rownum/5) AS page,start_date as startDate, end_date as endDate from recruit) where page=#{value}
+	</select>
+	<!-- 위에서 정의했던 boardListRM 을 확장하여(속성추가) 사용 -->
+	<!-- <resultMap type="bvo" id="boardRM" extends="boardListRM">
+	<result property="content" column="content" />	
+	</resultMap> -->
+	<!-- <select id="showContent"  resultMap="boardRM">
+	select no,title,view_count,writer,write_date,content,ref,restep,relevel
+	from spring_board_reply 
+	where no=#{value}
+	</select> -->
+	<!-- <update id="updateCount" parameterType="int">
+	update spring_board_reply set view_count=view_count+1 where no=#{no}
+	</update>
+	<select id="checkPass"  resultType="int" parameterType="hashmap">
+	select count(*) from spring_board_reply 
+	where no=#{no} and password=#{pass}
+	</select>
+	<delete id="deleteBoard">
+	delete from spring_board_reply where no=#{value}
+	</delete>
+	<update id="updateBoard" parameterType="bvo">
+	update spring_board_reply set title=#{title},content=#{content},writer=#{writer}
+	where no=#{no}
+	</update> -->
+	<select id="totalContent" resultType="int">
+		select count(*) from recruit
+	</select>	
+	<!-- 답변글처리를 위한 SQL 정의 2가지 
+		  1. 답변 대상글보다 restep이 큰 답변글을 +1 씩 update 시킨다.
+		  2. 답변글을 insert 시킨다. 
+	 -->
+	 <!-- BoardService: 답변글 restep+1 업데이트 , insert relevel+1 -->
+	<!--  <update id="updateRestep" parameterType="hashmap">
+	 UPDATE 	spring_board_reply 
+		  SET 		restep = restep+1
+	 	WHERE     ref=#{ref}
+	 	 AND 		restep > #{restep}
+	 </update>
+	 <insert id="writeReply" parameterType="bvo">
+	 	<selectKey keyProperty="no" resultType="int" order="BEFORE">
+	 		select spring_board_reply_seq.nextval from dual 
+	 	</selectKey>
+	 	insert into spring_board_reply
+	 	(no,title,writer,password,content,write_date,view_count,ref,restep,relevel)
+	 	values(#{no},#{title},#{writer},#{password},#{content},sysdate,0,
+	 	#{ref},#{restep},#{relevel})
+	 </insert> -->
+ </mapper> 
